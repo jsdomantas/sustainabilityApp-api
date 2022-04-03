@@ -9,28 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
 const express = require('express');
 const dotenv = require('dotenv');
 const admin = require('firebase-admin');
 const util = require('util');
 const morgan = require('morgan');
 const validateFirebaseIdToken = require('./middleware/firebaseAuth');
+const prismaClient = require('./prisma/prismaClient');
+const deviceTokenRouter = require('./routes/deviceToken.router');
 dotenv.config();
 const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-jt1hv-27b1827892.json');
 const app = express();
-const prismaClient = new client_1.PrismaClient();
 app.use(morgan('combined'));
 app.use(express.json());
-app.use(validateFirebaseIdToken);
+// app.use(validateFirebaseIdToken)
 const port = process.env.PORT;
 const delay = util.promisify(setTimeout);
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
-const sendPushNotification = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    return admin.messaging().send({
-        token,
+app.use('/deviceToken', deviceTokenRouter);
+const sendPushNotification = (tokens) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(tokens);
+    return admin.messaging().sendToDevice(tokens, {
         notification: {
             body: 'Test body',
             title: 'Test title',
@@ -70,6 +71,9 @@ app.post('/foodCollection', (req, res) => __awaiter(void 0, void 0, void 0, func
             isActive: true,
         }
     });
+    yield delay(5000);
+    const tokens = yield prismaClient.deviceToken.findMany();
+    yield sendPushNotification(tokens.map(t => t.token));
     res.sendStatus(200);
 }));
 app.get('/foodCollection', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -88,9 +92,6 @@ app.get('/foodCollection/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
         }
     });
     res.json(foodCollections);
-}));
-app.get('/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send("test 2");
 }));
 app.post('/alarm', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield delay(5000);

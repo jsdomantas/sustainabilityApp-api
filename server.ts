@@ -1,5 +1,4 @@
 import {Request, Response} from "express";
-import { PrismaClient } from '@prisma/client'
 
 const express = require('express');
 const dotenv = require('dotenv');
@@ -7,17 +6,18 @@ const admin = require('firebase-admin');
 const util = require('util');
 const morgan = require('morgan');
 const validateFirebaseIdToken = require('./middleware/firebaseAuth');
+const prismaClient = require('./prisma/prismaClient');
+const deviceTokenRouter = require('./routes/deviceToken.router');
 
 dotenv.config();
 
 const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-jt1hv-27b1827892.json');
 
 const app = express();
-const prismaClient = new PrismaClient();
 
 app.use(morgan('combined'));
 app.use(express.json());
-app.use(validateFirebaseIdToken)
+// app.use(validateFirebaseIdToken)
 const port = process.env.PORT;
 
 const delay = util.promisify(setTimeout);
@@ -26,9 +26,12 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 })
 
-const sendPushNotification = async (token: string)=> {
-    return admin.messaging().send({
-        token,
+app.use('/deviceToken', deviceTokenRouter);
+
+const sendPushNotification = async (tokens: Array<string>)=> {
+    console.log(tokens);
+
+    return admin.messaging().sendToDevice(tokens,{
         notification: {
             body: 'Test body',
             title: 'Test title',
@@ -76,6 +79,11 @@ app.post('/foodCollection', async (req: Request, res: Response) => {
         }
     });
 
+    await delay(5000);
+
+    const tokens = await prismaClient.deviceToken.findMany();
+    await sendPushNotification(tokens.map(t => t.token));
+
     res.sendStatus(200);
 })
 
@@ -98,10 +106,6 @@ app.get('/foodCollection/:id', async (req: Request, res: Response) => {
     });
 
     res.json(foodCollections);
-})
-
-app.get('/test', async (req: Request, res: Response) => {
-    res.send("test 2");
 })
 
 app.post('/alarm', async (req: Request, res: Response) => {

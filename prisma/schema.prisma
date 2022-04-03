@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id             Int          @id @default(autoincrement())
-  email          String       @unique
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
   Offer          Offer[]
   PantryItem     PantryItem[]
-  firebaseUserId String       @unique
+  firebaseUserId String        @unique
+  DeviceToken    DeviceToken[]
 }
 
 model Ingredient {
@@ -51,4 +52,11 @@ model PantryItem {
   userId         Int
   user           User     @relation(fields: [userId], references: [id])
   ingredientId   Int
+}
+
+model DeviceToken {
+  id     Int    @id @default(autoincrement())
+  token  String @unique
+  user   User   @relation(fields: [userAuthId], references: [firebaseUserId])
+  userAuthId String
 }
