@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  email          String       @unique
+  Offer          Offer[]
+  PantryItem     PantryItem[]
+  firebaseUserId String       @unique
+}
+
+model Ingredient {
+  id              Int              @id @default(autoincrement())
+  title           String           @unique
+  foodCollections FoodCollection[]
+}
+
+model FoodCollection {
+  id                Int          @id @default(autoincrement())
+  title             String
+  description       String
+  latitude          Float
+  longitude         Float
+  isActive          Boolean      @default(false)
+  neededIngredients Ingredient[]
+}
+
+model Offer {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  latitude    Float
+  longitude   Float
+  userId      Int
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+model PantryItem {
+  id             Int      @id @default(autoincrement())
+  title          String
+  description    String
+  expirationDate DateTime
+  photoUrl       String
+  isExpired      Boolean
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  ingredientId   Int
+}
