@@ -1,16 +1,24 @@
 const prismaClient = require("../configs/prisma.config");
 
 const saveDeviceToken = async (deviceToken: string, firebaseUserId: string) => {
-    await prismaClient.deviceToken.create({
-        data: {
+    const existingDeviceToken = await prismaClient.deviceToken.findFirst({
+        where: {
             token: deviceToken,
-            user: {
-                connect: {
-                    firebaseUserId,
-                }
-            }
         }
     })
+
+    if (!existingDeviceToken) {
+        await prismaClient.deviceToken.create({
+            data: {
+                token: deviceToken,
+                user: {
+                    connect: {
+                        firebaseUserId,
+                    }
+                }
+            }
+        })
+    }
 };
 
 module.exports = {

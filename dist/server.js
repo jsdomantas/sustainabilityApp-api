@@ -23,7 +23,7 @@ dotenv.config();
 const app = express();
 app.use(morgan('combined'));
 app.use(express.json());
-app.use(validateFirebaseIdToken);
+// app.use(validateFirebaseIdToken)
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
