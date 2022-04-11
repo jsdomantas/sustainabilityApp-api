@@ -11,4 +11,5 @@ export type UserData = {
     email: string;
     uid: string;
     isBusinessAccount: boolean;
+    products: Array<{ label: string; value: string }>;
 };

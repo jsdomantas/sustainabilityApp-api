@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const offers_router_1 = __importDefault(require("./src/routes/offers.router"));
 const express = require('express');
 const dotenv = require('dotenv');
 const admin = require('firebase-admin');
@@ -31,6 +35,7 @@ app.use('/auth', authRouter);
 app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
+app.use('/offers/stock', offers_router_1.default);
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.sendStatus(200);
 }));

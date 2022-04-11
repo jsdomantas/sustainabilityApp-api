@@ -7,7 +7,7 @@ import * as authService from '../services/auth.service';
 export const signUp = async (req: Request, res: Response) => {
     const userData: UserData = req.body;
 
-    const createdUser = await authService.createUser(userData.uid, userData.email);
+    const createdUser = await authService.createUser(userData.uid, userData.email, userData.isBusinessAccount ? 'business' : 'basic');
 
     if (userData.isBusinessAccount) {
         await authService.createBusinessUser(userData, createdUser.id);

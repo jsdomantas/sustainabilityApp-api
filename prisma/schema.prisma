@@ -18,14 +18,15 @@ model User {
 }
 
 model BusinessOwner {
-  id              Int     @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   userId          Int
-  user            User    @relation(fields: [userId], references: [id])
+  user            User         @relation(fields: [userId], references: [id])
   Offer           Offer[]
   title           String
   usualPickupTime String
   latitude        Float
   longitude       Float
+  products        Ingredient[]
 }
 
 model Customer {
@@ -40,6 +41,7 @@ model Ingredient {
   id              Int              @id @default(autoincrement())
   title           String           @unique
   foodCollections FoodCollection[]
+  businessOwners  BusinessOwner[]
 }
 
 model FoodCollection {

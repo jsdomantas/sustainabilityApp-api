@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import offersRouter from "./src/routes/offers.router";
 
 const express = require('express');
 const dotenv = require('dotenv');
@@ -26,6 +27,7 @@ app.use('/auth', authRouter);
 app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
+app.use('/offers/stock', offersRouter);
 
 app.get('/', async (req: Request, res: Response) => {
     res.sendStatus(200);

@@ -2,11 +2,12 @@ import { UserData } from "../types";
 
 import prismaClient from '../configs/prisma.config';
 
-export const createUser = async (firebaseUserId: string, email: string) => {
+export const createUser = async (firebaseUserId: string, email: string, role: 'basic' | 'business') => {
     return await prismaClient.user.create({
         data: {
             firebaseUserId: firebaseUserId,
             email: email,
+            role,
         }
     })
 }
@@ -22,6 +23,9 @@ export const createBusinessUser = async (userData: UserData, userId: number) => 
             latitude: userData.coordinates.latitude,
             longitude: userData.coordinates.longitude,
             usualPickupTime: userData.pickupTime,
+            products: {
+                connect: userData.products.map(product => ({ id: Number(product.value) }))
+            },
             user: {
                 connect: {
                     id: userId,
@@ -35,6 +39,9 @@ export const getUserProfile = async (firebaseAuthId: string) => {
     const user = await prismaClient.user.findFirst({
         where: { firebaseUserId: firebaseAuthId },
     })
+
+    console.log(user);
+
 
     if (!user) return null;
 
