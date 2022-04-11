@@ -1,7 +1,9 @@
-const prismaClient = require("../configs/prisma.config");
+import { UserData } from "../types";
 
-const createUser = async (firebaseUserId: string, email: string) => {
-    await prismaClient.user.create({
+import prismaClient from '../configs/prisma.config';
+
+export const createUser = async (firebaseUserId: string, email: string) => {
+    return await prismaClient.user.create({
         data: {
             firebaseUserId: firebaseUserId,
             email: email,
@@ -9,8 +11,22 @@ const createUser = async (firebaseUserId: string, email: string) => {
     })
 }
 
-module.exports = {
-    createUser,
+export const createBasicUser = async () => {
+    //
 }
 
-export {};
+export const createBusinessUser = async (userData: UserData, userId: number) => {
+    await prismaClient.businessOwner.create({
+        data: {
+            title: userData.name,
+            latitude: userData.coordinates.latitude,
+            longitude: userData.coordinates.longitude,
+            usualPickupTime: userData.pickupTime,
+            user: {
+                connect: {
+                    id: userId,
+                }
+            }
+        },
+    })
+}

@@ -1,4 +1,4 @@
-const prismaClient = require("../configs/prisma.config");
+import prismaClient from "../configs/prisma.config";
 
 const saveDeviceToken = async (deviceToken: string, firebaseUserId: string) => {
     const existingDeviceToken = await prismaClient.deviceToken.findFirst({

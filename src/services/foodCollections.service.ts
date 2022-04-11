@@ -1,4 +1,4 @@
-const prismaClient = require("../configs/prisma.config");
+import prismaClient from "../configs/prisma.config";
 
 const createFoodCollection = async (foodCollection: any) => {
     await prismaClient.foodCollection.create({

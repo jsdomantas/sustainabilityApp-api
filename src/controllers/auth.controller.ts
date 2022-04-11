@@ -1,11 +1,19 @@
 import { Request, Response } from "express";
+import { UserData } from "../types";
 
-const authService = require('../services/auth.service');
+import * as authService from '../services/auth.service';
 
 const signUp = async (req: Request, res: Response) => {
-    const userData = req.body;
+    const userData: UserData = req.body;
 
-    await authService.createUser(userData.user.uid, userData.user.email);
+    const createdUser = await authService.createUser(userData.uid, userData.email);
+
+    if (userData.isBusinessAccount) {
+        await authService.createBusinessUser(userData, createdUser.id);
+    } else {
+        await authService.createBasicUser();
+    }
+
     res.sendStatus(200);
 }
 

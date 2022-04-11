@@ -1,4 +1,5 @@
-const prismaClient = require("../configs/prisma.config");
+import prismaClient from "../configs/prisma.config";
+
 
 const getIngredients = async () => {
     return await prismaClient.ingredient.findMany();

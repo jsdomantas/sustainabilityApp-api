@@ -8,12 +8,32 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
-  Offer          Offer[]
-  PantryItem     PantryItem[]
-  firebaseUserId String        @unique
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  firebaseUserId String          @unique
   DeviceToken    DeviceToken[]
+  role           String          @default("basic")
+  BusinessOwner  BusinessOwner[]
+  Customer       Customer[]
+}
+
+model BusinessOwner {
+  id              Int     @id @default(autoincrement())
+  userId          Int
+  user            User    @relation(fields: [userId], references: [id])
+  Offer           Offer[]
+  title           String
+  usualPickupTime String
+  latitude        Float
+  longitude       Float
+}
+
+model Customer {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  user       User         @relation(fields: [userId], references: [id])
+  Offer      Offer[]
+  PantryItem PantryItem[]
 }
 
 model Ingredient {
@@ -33,13 +53,16 @@ model FoodCollection {
 }
 
 model Offer {
-  id          Int    @id @default(autoincrement())
-  title       String
-  description String
-  latitude    Float
-  longitude   Float
-  userId      Int
-  user        User   @relation(fields: [userId], references: [id])
+  id              Int           @id @default(autoincrement())
+  title           String
+  description     String
+  latitude        Float
+  longitude       Float
+  status          String        @default("posted")
+  businessOwnerId Int
+  businessOwner   BusinessOwner @relation(fields: [businessOwnerId], references: [id])
+  Customer        Customer?     @relation(fields: [customerId], references: [id])
+  customerId      Int?
 }
 
 model PantryItem {
@@ -49,14 +72,14 @@ model PantryItem {
   expirationDate DateTime
   photoUrl       String
   isExpired      Boolean
-  userId         Int
-  user           User     @relation(fields: [userId], references: [id])
+  customerId     Int
+  customer       Customer @relation(fields: [customerId], references: [id])
   ingredientId   Int
 }
 
 model DeviceToken {
-  id     Int    @id @default(autoincrement())
-  token  String @unique
-  user   User   @relation(fields: [userAuthId], references: [firebaseUserId])
+  id         Int    @id @default(autoincrement())
+  token      String @unique
+  user       User   @relation(fields: [userAuthId], references: [firebaseUserId])
   userAuthId String
 }
