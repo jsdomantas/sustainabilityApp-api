@@ -30,3 +30,37 @@ export const createBusinessUser = async (userData: UserData, userId: number) => 
         },
     })
 }
+
+export const getUserProfile = async (firebaseAuthId: string) => {
+    const user = await prismaClient.user.findFirst({
+        where: { firebaseUserId: firebaseAuthId },
+    })
+
+    if (!user) return null;
+
+    let clientOrBusinessOwner;
+    if (user.role === 'business') {
+        clientOrBusinessOwner = await prismaClient.businessOwner.findFirst({
+            where: { userId: user.id },
+            select: {
+                userId: false,
+                id: true,
+                latitude: true,
+                longitude: true,
+                title: true,
+                usualPickupTime: true,
+                user: {
+                    select: {
+                        role: true,
+                    }
+                }
+            },
+        })
+    } else {
+        clientOrBusinessOwner = await prismaClient.customer.findFirst({
+            where: { userId: user.id },
+        })
+    }
+
+    return clientOrBusinessOwner;
+}
