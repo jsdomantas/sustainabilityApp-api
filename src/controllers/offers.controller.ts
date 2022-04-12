@@ -10,6 +10,24 @@ export const getStockProducts = async (req: Request, res: Response) => {
     res.json(products);
 }
 
+export const getCreatedOffers = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    const offers = await offersService.getCreatedOffers(decodedToken?.uid);
+
+    res.json(offers);
+}
+
+export const getCreatedOffer = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    const offer = await offersService.getCreatedOffer(decodedToken?.uid, Number(req.params.id));
+
+    console.log(offer);
+
+    res.json(offer);
+}
+
 export const createOffer = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
 

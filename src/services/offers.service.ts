@@ -1,10 +1,13 @@
 import prismaClient from "../configs/prisma.config";
 
-export const getStock = async (firebaseAuthId: string | undefined) => {
+const getUser = async (firebaseAuthId: string | undefined) => {
     if (!firebaseAuthId) return null;
 
-    const user = await prismaClient.user.findFirst({ where: { firebaseUserId: firebaseAuthId }})
+    return await prismaClient.user.findFirst({ where: { firebaseUserId: firebaseAuthId } });
+}
 
+export const getStock = async (firebaseAuthId: string | undefined) => {
+    const user = await getUser(firebaseAuthId);
     if (!user) return null;
 
     const userWithProducts = await prismaClient.businessOwner.findFirst({
@@ -17,11 +20,41 @@ export const getStock = async (firebaseAuthId: string | undefined) => {
     return userWithProducts?.products || [];
 };
 
+export const getCreatedOffers = async (firebaseAuthId: string | undefined) => {
+    const user = await getUser(firebaseAuthId);
+    if (!user) return null;
+
+    const businessOwner = await prismaClient.businessOwner.findFirst({
+        where: { userId: user.id },
+    });
+
+    if (!businessOwner) return null;
+
+    return await prismaClient.offer.findMany({
+        where: { businessOwnerId: businessOwner.id },
+    })
+}
+
+export const getCreatedOffer = async (firebaseAuthId: string | undefined, offerId: number) => {
+    const user = await getUser(firebaseAuthId);
+    if (!user) return null;
+
+    const businessOwner = await prismaClient.businessOwner.findFirst({
+        where: { userId: user.id },
+    });
+
+    if (!businessOwner) return null;
+
+    return await prismaClient.offer.findFirst({
+        where: { id: offerId },
+        include: {
+            products: true,
+        }
+    })
+}
+
 export const createOffer = async (offerData: any, firebaseAuthId: string | undefined) => {
-    if (!firebaseAuthId) return null;
-
-    const user = await prismaClient.user.findFirst({ where: { firebaseUserId: firebaseAuthId }})
-
+    const user = await getUser(firebaseAuthId);
     if (!user) return null;
 
     const businessOwner = await prismaClient.businessOwner.findFirst({
