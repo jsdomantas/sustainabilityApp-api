@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
 const offers_router_1 = __importDefault(require("./src/routes/offers.router"));
-const express = require('express');
+const firebase_admin_1 = __importDefault(require("firebase-admin"));
 const dotenv = require('dotenv');
-const admin = require('firebase-admin');
 const morgan = require('morgan');
 const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-jt1hv-27b1827892.json');
 const validateFirebaseIdToken = require('./src/middleware/firebaseAuth');
@@ -24,18 +24,18 @@ const ingredientsRouter = require('./src/routes/ingredients.router');
 const authRouter = require('./src/routes/auth.router');
 const foodCollectionRouter = require('./src/routes/foodCollections.router');
 dotenv.config();
-const app = express();
+const app = (0, express_1.default)();
 app.use(morgan('combined'));
-app.use(express.json());
+app.use(express_1.default.json());
 // app.use(validateFirebaseIdToken)
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+firebase_admin_1.default.initializeApp({
+    credential: firebase_admin_1.default.credential.cert(serviceAccount),
 });
 app.use('/auth', authRouter);
 app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
-app.use('/offers/stock', offers_router_1.default);
+app.use('/offers', offers_router_1.default);
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.sendStatus(200);
 }));

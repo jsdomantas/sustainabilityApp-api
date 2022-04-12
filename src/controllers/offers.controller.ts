@@ -7,6 +7,13 @@ export const getStockProducts = async (req: Request, res: Response) => {
 
     const products = await offersService.getStock(decodedToken?.uid);
 
-    console.log(products);
     res.json(products);
+}
+
+export const createOffer = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    await offersService.createOffer(req.body, decodedToken?.uid);
+
+    res.sendStatus(200);
 }

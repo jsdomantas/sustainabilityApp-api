@@ -1,9 +1,8 @@
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
 import offersRouter from "./src/routes/offers.router";
+import admin from "firebase-admin";
 
-const express = require('express');
 const dotenv = require('dotenv');
-const admin = require('firebase-admin');
 const morgan = require('morgan');
 const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-jt1hv-27b1827892.json');
 const validateFirebaseIdToken = require('./src/middleware/firebaseAuth');
@@ -27,7 +26,7 @@ app.use('/auth', authRouter);
 app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
-app.use('/offers/stock', offersRouter);
+app.use('/offers', offersRouter);
 
 app.get('/', async (req: Request, res: Response) => {
     res.sendStatus(200);
