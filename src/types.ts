@@ -1,4 +1,4 @@
-export type UserData = {
+export type BusinessUserData = {
     coordinates: {
         latitude: number;
         latitudeDelta: number;
@@ -13,3 +13,14 @@ export type UserData = {
     isBusinessAccount: boolean;
     products: Array<{ label: string; value: string }>;
 };
+
+export type CustomerUserData = {
+    name: string;
+    phoneNumber: string;
+    photoUrl: string;
+    familyCardNumber: string;
+    preferredFoodCategories: Array<{ value: number; label: string }>;
+    isBusinessAccount: boolean;
+    email: string;
+    uid: string;
+}

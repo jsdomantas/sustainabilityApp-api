@@ -1,4 +1,4 @@
-import { UserData } from "../types";
+import { BusinessUserData, CustomerUserData } from "../types";
 
 import prismaClient from '../configs/prisma.config';
 
@@ -12,17 +12,33 @@ export const createUser = async (firebaseUserId: string, email: string, role: 'b
     })
 }
 
-export const createBasicUser = async () => {
-    //
+export const createBasicUser = async (userData: CustomerUserData, userId: number) => {
+    await prismaClient.customer.create({
+        data: {
+            fullName: userData.name,
+            phoneNumber: userData.phoneNumber,
+            photoUrl: userData.photoUrl,
+            familyCardNumber: userData.familyCardNumber,
+            preferredCategories: {
+                connect: userData.preferredFoodCategories.map(category => ({ id: category.value }))
+            },
+            user: {
+                connect: {
+                    id: userId,
+                }
+            }
+        }
+    })
 }
 
-export const createBusinessUser = async (userData: UserData, userId: number) => {
+export const createBusinessUser = async (userData: BusinessUserData, userId: number) => {
     await prismaClient.businessOwner.create({
         data: {
             title: userData.name,
             latitude: userData.coordinates.latitude,
             longitude: userData.coordinates.longitude,
             usualPickupTime: userData.pickupTime,
+            phoneNumber: userData.phoneNumber,
             products: {
                 connect: userData.products.map(product => ({ id: Number(product.value) }))
             },

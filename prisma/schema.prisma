@@ -24,17 +24,23 @@ model BusinessOwner {
   Offer           Offer[]
   title           String
   usualPickupTime String
+  phoneNumber     String
   latitude        Float
   longitude       Float
   products        Ingredient[]
 }
 
 model Customer {
-  id         Int          @id @default(autoincrement())
-  userId     Int
-  user       User         @relation(fields: [userId], references: [id])
-  Offer      Offer[]
-  PantryItem PantryItem[]
+  id                  Int             @id @default(autoincrement())
+  userId              Int
+  user                User            @relation(fields: [userId], references: [id])
+  fullName            String
+  phoneNumber         String
+  familyCardNumber    String
+  photoUrl            String
+  preferredCategories OfferCategory[]
+  Offer               Offer[]
+  PantryItem          PantryItem[]
 }
 
 model Ingredient {
@@ -55,19 +61,29 @@ model FoodCollection {
   neededIngredients Ingredient[]
 }
 
+model OfferCategory {
+  id        Int        @id @default(autoincrement())
+  title     String     @unique
+  Offer     Offer[]
+  customers Customer[]
+}
+
 model Offer {
-  id              Int           @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
+  createdAt       DateTime       @default(now())
+  category        OfferCategory? @relation(fields: [categoryId], references: [id])
+  categoryId      Int?
   title           String
   description     String
   latitude        Float
   longitude       Float
-  status          String        @default("posted")
+  status          String         @default("posted")
   photoUrl        String
   products        Ingredient[]
   pickupTime      String
   businessOwnerId Int
-  businessOwner   BusinessOwner @relation(fields: [businessOwnerId], references: [id])
-  Customer        Customer?     @relation(fields: [customerId], references: [id])
+  businessOwner   BusinessOwner  @relation(fields: [businessOwnerId], references: [id])
+  Customer        Customer?      @relation(fields: [customerId], references: [id])
   customerId      Int?
 }
 

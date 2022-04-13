@@ -8,7 +8,7 @@ const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-
 const validateFirebaseIdToken = require('./src/middleware/firebaseAuth');
 const deviceTokenRouter = require('./src/routes/deviceToken.router');
 const ingredientsRouter = require('./src/routes/ingredients.router');
-const authRouter = require('./src/routes/auth.router');
+import authRouter from './src/routes/auth.router';
 const foodCollectionRouter = require('./src/routes/foodCollections.router');
 
 dotenv.config();
@@ -34,4 +34,5 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.listen(process.env.PORT, () => {
     console.log('starting server ...');
+    console.log('asjkldlkasjd');
 })

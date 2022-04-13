@@ -21,7 +21,7 @@ const serviceAccount = require('./../sustainability-app-6f466-firebase-adminsdk-
 const validateFirebaseIdToken = require('./src/middleware/firebaseAuth');
 const deviceTokenRouter = require('./src/routes/deviceToken.router');
 const ingredientsRouter = require('./src/routes/ingredients.router');
-const authRouter = require('./src/routes/auth.router');
+const auth_router_1 = __importDefault(require("./src/routes/auth.router"));
 const foodCollectionRouter = require('./src/routes/foodCollections.router');
 dotenv.config();
 const app = (0, express_1.default)();
@@ -31,7 +31,7 @@ app.use(express_1.default.json());
 firebase_admin_1.default.initializeApp({
     credential: firebase_admin_1.default.credential.cert(serviceAccount),
 });
-app.use('/auth', authRouter);
+app.use('/auth', auth_router_1.default);
 app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
@@ -41,4 +41,5 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.listen(process.env.PORT, () => {
     console.log('starting server ...');
+    console.log('asjkldlkasjd');
 });
