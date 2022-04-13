@@ -11,13 +11,17 @@ export const getStockProducts = async (req: Request, res: Response) => {
 }
 
 export const getAllOffers = async (req: Request, res: Response) => {
-    const allOffers = await offersService.getAllOffers();
+    const allOffers = await offersService.getAllAvailableOffers();
 
     res.json(allOffers);
 }
 
 export const getOffer = async (req: Request, res: Response) => {
     const id = req.params.id;
+
+    if (!id) {
+        res.sendStatus(400);
+    }
 
     const offer = await offersService.getOffer(Number(id));
 
@@ -34,6 +38,9 @@ export const getCreatedOffers = async (req: Request, res: Response) => {
 
 export const getCreatedOffer = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
+    if (!req.params.id) {
+        res.sendStatus(400);
+    }
 
     const offer = await offersService.getCreatedOffer(decodedToken?.uid, Number(req.params.id));
 
@@ -48,4 +55,26 @@ export const createOffer = async (req: Request, res: Response) => {
     await offersService.createOffer(req.body, decodedToken?.uid);
 
     res.sendStatus(200);
+}
+
+export const handleOfferAction = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    if (req.body.actionType === 'reserve') {
+        await offersService.reserveOffer(decodedToken?.uid, Number(req.params.id));
+    } else if (req.body.actionType === 'complete') {
+        await offersService.pickupOffer(Number(req.params.id));
+    } else {
+        res.sendStatus(400);
+    }
+
+    res.sendStatus(200);
+}
+
+export const getUserOffersHistory = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    const history = await offersService.getUserOffersHistory(decodedToken?.uid);
+
+    res.json(history);
 }

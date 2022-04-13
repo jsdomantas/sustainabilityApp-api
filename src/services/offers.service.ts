@@ -20,8 +20,9 @@ export const getStock = async (firebaseAuthId: string | undefined) => {
     return userWithProducts?.products || [];
 };
 
-export const getAllOffers = async () => {
+export const getAllAvailableOffers = async () => {
     return await prismaClient.offer.findMany({
+        where: { status: 'posted' },
         select: {
             id: true,
             createdAt: true,
@@ -52,6 +53,11 @@ export const getOffer = async (id: number) => {
             description: true,
             photoUrl: true,
             pickupTime: true,
+            products: {
+                select: {
+                    title: true,
+                },
+            },
             businessOwner: {
                 select: {
                     title: true,
@@ -125,6 +131,76 @@ export const createOffer = async (offerData: any, firebaseAuthId: string | undef
             },
             businessOwner: {
                 connect: { id: businessOwner.id },
+            }
+        }
+    })
+}
+
+export const reserveOffer = async (firebaseAuthId: string | undefined, offerId: number)=> {
+    const user = await getUser(firebaseAuthId);
+    if (!user) return null;
+
+    const customer = await prismaClient.customer.findFirst({
+        where: { userId: user.id },
+    });
+
+    if (!customer) return null;
+
+    await prismaClient.offer.update({
+        where: { id: offerId },
+        data: {
+            status: 'reserved',
+            customerId: customer.id,
+        }
+    });
+}
+
+export const pickupOffer = async (offerId: number)=> {
+    await prismaClient.offer.update({
+        where: { id: offerId },
+        data: {
+            status: 'taken',
+        }
+    });
+}
+
+export const getUserOffersHistory = async (firebaseAuthId: string | undefined)=> {
+    const user = await getUser(firebaseAuthId);
+    if (!user) return null;
+
+    const customer = await prismaClient.customer.findFirst({
+        where: { userId: user.id },
+    });
+
+    if (!customer) return null;
+
+    return await prismaClient.offer.findMany({
+        where: { customerId: customer.id },
+        select: {
+            id: true,
+            createdAt: true,
+            title: true,
+            description: true,
+            photoUrl: true,
+            pickupTime: true,
+            status: true,
+            products: {
+                select: {
+                    title: true
+                },
+            },
+            businessOwner: {
+                select: {
+                    title: true,
+                    latitude: true,
+                    longitude: true,
+                    phoneNumber: true,
+                }
+            },
+            category: {
+                select: {
+                    title: true,
+                }
             }
         }
     })
