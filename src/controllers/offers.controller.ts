@@ -78,3 +78,13 @@ export const getUserOffersHistory = async (req: Request, res: Response) => {
 
     res.json(history);
 }
+
+export const createReview = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    const { receiverId, offerId, review } = req.body;
+
+    await offersService.createReview(decodedToken?.uid, Number(receiverId), Number(offerId), review);
+
+    res.sendStatus(200);
+}

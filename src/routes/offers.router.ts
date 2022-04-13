@@ -12,4 +12,6 @@ offersRouter.get('/details/:id', offersController.getOffer);
 offersRouter.post('/details/:id/actions', offersController.handleOfferAction);
 offersRouter.get('/history', offersController.getUserOffersHistory);
 
+offersRouter.post('/review', offersController.createReview);
+
 export default offersRouter;

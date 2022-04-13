@@ -15,6 +15,8 @@ model User {
   role           String          @default("basic")
   BusinessOwner  BusinessOwner[]
   Customer       Customer[]
+  reviewGiver    Review[]        @relation("giver")
+  reviewReceiver Review[]        @relation("receiver")
 }
 
 model BusinessOwner {
@@ -82,6 +84,7 @@ model Offer {
   products        Ingredient[]
   pickupTime      String
   businessOwnerId Int
+  reviews         Review[]
   businessOwner   BusinessOwner  @relation(fields: [businessOwnerId], references: [id])
   Customer        Customer?      @relation(fields: [customerId], references: [id])
   customerId      Int?
@@ -104,4 +107,16 @@ model DeviceToken {
   token      String @unique
   user       User   @relation(fields: [userAuthId], references: [firebaseUserId])
   userAuthId String
+}
+
+model Review {
+  id         Int     @id @default(autoincrement())
+  rating     Int
+  comment    String?
+  offer      Offer   @relation(fields: [offerId], references: [id])
+  offerId    Int
+  giver      User    @relation("giver", fields: [giverId], references: [firebaseUserId])
+  giverId    String
+  receiver   User    @relation("receiver", fields: [receiverId], references: [firebaseUserId])
+  receiverId String
 }

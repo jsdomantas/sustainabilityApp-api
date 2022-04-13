@@ -136,7 +136,7 @@ export const createOffer = async (offerData: any, firebaseAuthId: string | undef
     })
 }
 
-export const reserveOffer = async (firebaseAuthId: string | undefined, offerId: number)=> {
+export const reserveOffer = async (firebaseAuthId: string | undefined, offerId: number) => {
     const user = await getUser(firebaseAuthId);
     if (!user) return null;
 
@@ -155,7 +155,7 @@ export const reserveOffer = async (firebaseAuthId: string | undefined, offerId: 
     });
 }
 
-export const pickupOffer = async (offerId: number)=> {
+export const pickupOffer = async (offerId: number) => {
     await prismaClient.offer.update({
         where: { id: offerId },
         data: {
@@ -164,7 +164,7 @@ export const pickupOffer = async (offerId: number)=> {
     });
 }
 
-export const getUserOffersHistory = async (firebaseAuthId: string | undefined)=> {
+export const getUserOffersHistory = async (firebaseAuthId: string | undefined) => {
     const user = await getUser(firebaseAuthId);
     if (!user) return null;
 
@@ -192,14 +192,52 @@ export const getUserOffersHistory = async (firebaseAuthId: string | undefined)=>
             businessOwner: {
                 select: {
                     title: true,
-                    latitude: true,
-                    longitude: true,
-                    phoneNumber: true,
+                    id: true,
                 }
             },
             category: {
                 select: {
                     title: true,
+                }
+            }
+        }
+    })
+}
+
+export const createReview = async (firebaseAuthId: string | undefined, receiverId: number, offerId: number, reviewData: any) => {
+    const user = await getUser(firebaseAuthId);
+    if (!user) return null;
+
+    let receiver;
+    if (user.role === 'business') {
+        receiver = await prismaClient.customer.findFirst({
+            where: { id: receiverId },
+            include: { user: true }
+        });
+    } else {
+        receiver = await prismaClient.businessOwner.findFirst({
+            where: { id: receiverId },
+            include: { user: true },
+        });
+    }
+
+    if (!receiver) return null;
+
+    await prismaClient.review.create({
+        data: {
+            rating: reviewData.rating,
+            comment: reviewData.comment,
+            offer: {
+                connect: { id: offerId },
+            },
+            giver: {
+                connect: {
+                    firebaseUserId: firebaseAuthId,
+                }
+            },
+            receiver: {
+                connect: {
+                    firebaseUserId: receiver.user.firebaseUserId,
                 }
             }
         }
