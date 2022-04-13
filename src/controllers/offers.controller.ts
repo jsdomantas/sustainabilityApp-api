@@ -10,6 +10,20 @@ export const getStockProducts = async (req: Request, res: Response) => {
     res.json(products);
 }
 
+export const getAllOffers = async (req: Request, res: Response) => {
+    const allOffers = await offersService.getAllOffers();
+
+    res.json(allOffers);
+}
+
+export const getOffer = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    const offer = await offersService.getOffer(Number(id));
+
+    res.json(offer);
+}
+
 export const getCreatedOffers = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
 

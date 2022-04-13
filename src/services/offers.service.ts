@@ -20,6 +20,55 @@ export const getStock = async (firebaseAuthId: string | undefined) => {
     return userWithProducts?.products || [];
 };
 
+export const getAllOffers = async () => {
+    return await prismaClient.offer.findMany({
+        select: {
+            id: true,
+            createdAt: true,
+            title: true,
+            photoUrl: true,
+            pickupTime: true,
+            businessOwner: {
+                select: {
+                    title: true
+                }
+            },
+            category: {
+                select: {
+                    title: true
+                }
+            }
+        }
+    });
+}
+
+export const getOffer = async (id: number) => {
+    return await prismaClient.offer.findFirst({
+        where: { id },
+        select: {
+            id: true,
+            createdAt: true,
+            title: true,
+            description: true,
+            photoUrl: true,
+            pickupTime: true,
+            businessOwner: {
+                select: {
+                    title: true,
+                    latitude: true,
+                    longitude: true,
+                    phoneNumber: true,
+                }
+            },
+            category: {
+                select: {
+                    title: true,
+                }
+            }
+        }
+    })
+}
+
 export const getCreatedOffers = async (firebaseAuthId: string | undefined) => {
     const user = await getUser(firebaseAuthId);
     if (!user) return null;
