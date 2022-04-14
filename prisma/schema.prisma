@@ -51,6 +51,7 @@ model Ingredient {
   foodCollections FoodCollection[]
   businessOwners  BusinessOwner[]
   offers          Offer[]
+  PantryItem      PantryItem[]
 }
 
 model FoodCollection {
@@ -91,15 +92,17 @@ model Offer {
 }
 
 model PantryItem {
-  id             Int      @id @default(autoincrement())
-  title          String
-  description    String
-  expirationDate DateTime
-  photoUrl       String
-  isExpired      Boolean
-  customerId     Int
-  customer       Customer @relation(fields: [customerId], references: [id])
-  ingredientId   Int
+  id               Int        @id @default(autoincrement())
+  expirationDate   String
+  photoUrl         String?
+  pantryCategory   String
+  quantity         Int?
+  measurementUnits String?
+  isExpired        Boolean    @default(false)
+  customerId       Int
+  customer         Customer   @relation(fields: [customerId], references: [id])
+  ingredientId     Int
+  ingredient       Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model DeviceToken {

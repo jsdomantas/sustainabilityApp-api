@@ -1,10 +1,5 @@
 import prismaClient from "../configs/prisma.config";
-
-const getUser = async (firebaseAuthId: string | undefined) => {
-    if (!firebaseAuthId) return null;
-
-    return await prismaClient.user.findFirst({ where: { firebaseUserId: firebaseAuthId } });
-}
+import { getUser } from "../utils";
 
 export const getStock = async (firebaseAuthId: string | undefined) => {
     const user = await getUser(firebaseAuthId);

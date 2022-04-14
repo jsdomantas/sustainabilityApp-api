@@ -9,6 +9,7 @@ const validateFirebaseIdToken = require('./src/middleware/firebaseAuth');
 const deviceTokenRouter = require('./src/routes/deviceToken.router');
 const ingredientsRouter = require('./src/routes/ingredients.router');
 import authRouter from './src/routes/auth.router';
+import pantryRouter from "./src/routes/pantry.router";
 const foodCollectionRouter = require('./src/routes/foodCollections.router');
 
 // dotenv.config();
@@ -27,6 +28,7 @@ app.use('/deviceToken', deviceTokenRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/foodCollection', foodCollectionRouter);
 app.use('/offers', offersRouter);
+app.use('/pantry', pantryRouter);
 
 app.get('/', async (req: Request, res: Response) => {
     res.sendStatus(200);
