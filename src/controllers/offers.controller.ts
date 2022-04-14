@@ -11,7 +11,10 @@ export const getStockProducts = async (req: Request, res: Response) => {
 }
 
 export const getAllOffers = async (req: Request, res: Response) => {
-    const allOffers = await offersService.getAllAvailableOffers();
+
+    const { lat, lon } = req.query;
+
+    const allOffers = await offersService.getAllAvailableOffers({ latitude: lat, longitude: lon});
 
     res.json(allOffers);
 }

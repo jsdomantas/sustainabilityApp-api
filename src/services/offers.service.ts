@@ -20,8 +20,20 @@ export const getStock = async (firebaseAuthId: string | undefined) => {
     return userWithProducts?.products || [];
 };
 
-export const getAllAvailableOffers = async () => {
-    return await prismaClient.offer.findMany({
+export const getAllAvailableOffers = async (parameters: any) => {
+    console.log(parameters);
+    function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+        console.log({ lat1, lon1, lat2, lon2 });
+        const p = 0.017453292519943295;    // Math.PI / 180
+        const c = Math.cos;
+        const a = 0.5 - c((lat2 - lat1) * p)/2 +
+            c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p))/2;
+
+        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    }
+
+    const offers = await prismaClient.offer.findMany({
         where: { status: 'posted' },
         select: {
             id: true,
@@ -31,7 +43,9 @@ export const getAllAvailableOffers = async () => {
             pickupTime: true,
             businessOwner: {
                 select: {
-                    title: true
+                    title: true,
+                    latitude: true,
+                    longitude: true,
                 }
             },
             category: {
@@ -39,6 +53,17 @@ export const getAllAvailableOffers = async () => {
                     title: true
                 }
             }
+        }
+    });
+
+    if (!parameters) return offers;
+
+    return offers.filter(offer => {
+        const distanceBetweenUserAndOffer = calculateDistance(Number(parameters.latitude), Number(parameters.longitude), offer.businessOwner.latitude, offer.businessOwner.longitude);
+        console.log(distanceBetweenUserAndOffer);
+
+        if (distanceBetweenUserAndOffer <= 50) {
+            return offer;
         }
     });
 }
