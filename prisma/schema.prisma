@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id             Int             @id @default(autoincrement())
+  createdAt      DateTime        @default(now())
   email          String          @unique
   firebaseUserId String          @unique
   DeviceToken    DeviceToken[]
@@ -93,6 +94,7 @@ model Offer {
 
 model PantryItem {
   id               Int        @id @default(autoincrement())
+  createdAt        DateTime   @default(now())
   expirationDate   String
   photoUrl         String?
   pantryCategory   String
@@ -113,13 +115,14 @@ model DeviceToken {
 }
 
 model Review {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
   rating     Int
   comment    String?
-  offer      Offer   @relation(fields: [offerId], references: [id])
+  offer      Offer    @relation(fields: [offerId], references: [id])
   offerId    Int
-  giver      User    @relation("giver", fields: [giverId], references: [firebaseUserId])
+  giver      User     @relation("giver", fields: [giverId], references: [firebaseUserId])
   giverId    String
-  receiver   User    @relation("receiver", fields: [receiverId], references: [firebaseUserId])
+  receiver   User     @relation("receiver", fields: [receiverId], references: [firebaseUserId])
   receiverId String
 }

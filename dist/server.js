@@ -45,7 +45,4 @@ app.listen(8000, () => {
     console.log('starting server ...');
     console.log('asjkldlkasjd');
 });
-process.on('uncaughtException', e => {
-    console.error(e);
-});
-process.on('SIGTERM', () => { });
+process.on('SIGINT', () => { console.log("Bye bye!"); process.exit(); });

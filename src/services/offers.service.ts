@@ -84,6 +84,11 @@ export const getOffer = async (id: number) => {
                     latitude: true,
                     longitude: true,
                     phoneNumber: true,
+                    user: {
+                        select: {
+                            reviewReceiver: true,
+                        },
+                    }
                 }
             },
             category: {
