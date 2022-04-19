@@ -12,9 +12,9 @@ export const getStockProducts = async (req: Request, res: Response) => {
 
 export const getAllOffers = async (req: Request, res: Response) => {
 
-    const { lat, lon } = req.query;
+    const { lat, lon, query } = req.query;
 
-    const allOffers = await offersService.getAllAvailableOffers({ latitude: lat, longitude: lon});
+    const allOffers = await offersService.getAllAvailableOffers({ latitude: lat, longitude: lon, searchQuery: query });
 
     res.json(allOffers);
 }
