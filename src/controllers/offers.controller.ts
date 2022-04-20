@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import * as offersService from '../services/offers.service';
 import { getDecodedJwt } from "../utils";
+import prismaClient from "../configs/prisma.config";
+import * as notificationsService from '../services/notifications.service';
 
 export const getStockProducts = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
@@ -56,6 +58,17 @@ export const createOffer = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
 
     await offersService.createOffer(req.body, decodedToken?.uid);
+
+    const usersWithFamilyCards = await prismaClient.customer.findMany({ where: { familyCardNumber: { contains: '1' } } });
+    const usersWithFamilyCardsDeviceTokens = await prismaClient.deviceToken.findMany({ where: { user: { id: { in: usersWithFamilyCards.map(user => user.userId) } } } });
+
+    const usersWithoutFamilyCardsDeviceTokens = await prismaClient.deviceToken.findMany({ where: { NOT: { user: { id: { in: usersWithFamilyCards.map(user => user.userId) } } } } });
+
+    await notificationsService.sendBackgroundPushNotifications(usersWithFamilyCardsDeviceTokens.map(obj => obj.token));
+
+    setTimeout(async () => {
+        await notificationsService.sendBackgroundPushNotifications(usersWithoutFamilyCardsDeviceTokens.map(obj => obj.token));
+    }, 1000 * 10);
 
     res.sendStatus(200);
 }

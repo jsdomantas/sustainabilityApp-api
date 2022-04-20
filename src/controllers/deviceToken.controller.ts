@@ -1,15 +1,12 @@
 import { Request, Response } from "express";
-const deviceTokenService = require('../services/deviceToken.service');
+import * as deviceTokenService from '../services/deviceToken.service';
+import { getDecodedJwt } from "../utils";
 
-const saveDeviceToken = async (req: Request, res: Response) => {
-    const deviceToken = req.body.deviceToken;
-    const firebaseUserId = req.body.userAuthId;
+export const saveDeviceToken = async (req: Request, res: Response) => {
+    const deviceToken = req.body.token;
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
 
-    await deviceTokenService.saveDeviceToken(deviceToken, firebaseUserId);
+    await deviceTokenService.saveDeviceToken(deviceToken, decodedToken?.uid);
 
     res.sendStatus(200);
-}
-
-module.exports = {
-    saveDeviceToken,
 }

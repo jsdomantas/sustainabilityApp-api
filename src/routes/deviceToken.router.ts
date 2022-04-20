@@ -1,10 +1,8 @@
-const express = require('express');
-const deviceTokenController = require('../controllers/deviceToken.controller');
+import * as deviceTokenController from '../controllers/deviceToken.controller';
+import express from "express";
 
 const deviceTokenRouter = express.Router();
 
 deviceTokenRouter.post('/', deviceTokenController.saveDeviceToken);
 
-module.exports = deviceTokenRouter;
-
-export {};
+export default deviceTokenRouter;
