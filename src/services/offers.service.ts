@@ -86,6 +86,7 @@ export const getOffer = async (id: number) => {
             products: {
                 select: {
                     title: true,
+                    id: true,
                 },
             },
             businessOwner: {

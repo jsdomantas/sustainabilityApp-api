@@ -3,6 +3,7 @@ import { BusinessUserData, CustomerUserData } from "../types";
 import admin from 'firebase-admin';
 
 import * as authService from '../services/auth.service';
+import * as recombeeService from '../services/recombee.service';
 
 export const signUp = async (req: Request, res: Response) => {
     const userData: BusinessUserData | CustomerUserData = req.body;
@@ -13,6 +14,7 @@ export const signUp = async (req: Request, res: Response) => {
         await authService.createBusinessUser(userData as BusinessUserData, createdUser.id);
     } else {
         await authService.createBasicUser(userData as CustomerUserData, createdUser.id);
+        await recombeeService.createUser(userData.uid);
     }
 
     res.sendStatus(200);

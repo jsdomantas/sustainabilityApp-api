@@ -3,6 +3,7 @@ import * as offersService from '../services/offers.service';
 import { getDecodedJwt } from "../utils";
 import prismaClient from "../configs/prisma.config";
 import * as notificationsService from '../services/notifications.service';
+import * as recombeeService from '../services/recombee.service';
 
 export const getStockProducts = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
@@ -22,6 +23,7 @@ export const getAllOffers = async (req: Request, res: Response) => {
 }
 
 export const getOffer = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
     const id = req.params.id;
 
     if (!id) {
@@ -29,6 +31,11 @@ export const getOffer = async (req: Request, res: Response) => {
     }
 
     const offer = await offersService.getOffer(Number(id));
+
+    const offerProducts = offer?.products.map(product => product.id);
+    if (offerProducts) {
+        await recombeeService.addDetailViewInteraction(decodedToken?.uid, offerProducts);
+    }
 
     res.json(offer);
 }

@@ -14,6 +14,7 @@
     "express": "^4.17.3",
     "firebase-admin": "^10.0.2",
     "morgan": "^1.10.0",
+    "recombee-api-client": "^4.0.0",
     "util": "^0.12.4"
   },
   "devDependencies": {
