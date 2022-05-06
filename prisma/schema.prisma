@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -50,20 +49,9 @@ model Customer {
 model Ingredient {
   id              Int              @id @default(autoincrement())
   title           String           @unique
-  foodCollections FoodCollection[]
   businessOwners  BusinessOwner[]
   offers          Offer[]
   PantryItem      PantryItem[]
-}
-
-model FoodCollection {
-  id                Int          @id @default(autoincrement())
-  title             String
-  description       String
-  latitude          Float
-  longitude         Float
-  isActive          Boolean      @default(false)
-  neededIngredients Ingredient[]
 }
 
 model OfferCategory {
