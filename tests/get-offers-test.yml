@@ -1,0 +1,16 @@
+config:
+  target: "http://localhost:8000"
+  plugins:
+    metrics-by-endpoint: {}
+  phases:
+    - duration: 60
+      arrivalRate: 300
+
+scenarios:
+  - name: "Get all offers"
+    flow:
+      - get:
+          url: "/offers"
+      - think: 1
+      - get:
+          url: "/offers/details/21"
