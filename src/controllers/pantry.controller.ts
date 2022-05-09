@@ -17,3 +17,9 @@ export const createPantryItem = async (req: Request, res: Response) => {
 
     res.sendStatus(200);
 };
+
+export const deletePantryItem = async (req: Request, res: Response) => {
+    await pantryService.deletePantryItem(Number(req.params.id));
+
+    res.sendStatus(200);
+}

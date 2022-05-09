@@ -48,3 +48,11 @@ export const createPantryItem = async (firebaseAuthId: string | undefined, item:
         }
     })
 };
+
+export const deletePantryItem = async (itemId: number) => {
+    return await prismaClient.pantryItem.delete({
+        where: {
+            id: itemId,
+        }
+    })
+}
