@@ -44,6 +44,11 @@ export const getAllAvailableOffers = async (parameters: any) => {
                     title: true,
                     latitude: true,
                     longitude: true,
+                    user: {
+                        select: {
+                            reviewReceiver: true,
+                        },
+                    }
                 }
             },
             category: {
