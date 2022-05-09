@@ -2,4 +2,5 @@ node_modules
 # Keep environment variables out of version control
 .env
 .idea
+dist/
 sustainability-app-6f466-firebase-adminsdk-jt1hv-27b1827892.json

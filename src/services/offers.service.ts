@@ -29,9 +29,7 @@ export const getAllAvailableOffers = async (parameters: any) => {
         return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
     }
 
-    if (!parameters) return [];
-
-    const offers = await prismaClient.offer.findMany({
+    let filteredOffers = await prismaClient.offer.findMany({
         where: {
             status: 'posted',
         },
@@ -56,21 +54,26 @@ export const getAllAvailableOffers = async (parameters: any) => {
         }
     });
 
-    if (parameters.latitude && parameters.longitude) {
-        return offers.filter(offer => {
-            const distanceBetweenUserAndOffer = calculateDistance(Number(parameters.latitude), Number(parameters.longitude), offer.businessOwner.latitude, offer.businessOwner.longitude);
+    if (parameters) {
+        if (parameters.latitude && parameters.longitude) {
+            filteredOffers = filteredOffers.filter(offer => {
+                const distanceBetweenUserAndOffer = calculateDistance(Number(parameters.latitude), Number(parameters.longitude), offer.businessOwner.latitude, offer.businessOwner.longitude);
 
-            if (distanceBetweenUserAndOffer <= 50) {
-                return offer;
-            }
-        });
+                if (distanceBetweenUserAndOffer <= 50) {
+                    return offer;
+                }
+            });
+        }
+        if (parameters.searchQuery) {
+            filteredOffers = filteredOffers.filter(offer => {
+                if (JSON.stringify(offer).includes(parameters.searchQuery)) {
+                    return offer;
+                }
+            })
+        }
     }
 
-    return offers.filter(offer => {
-        if (JSON.stringify(offer).includes(parameters.searchQuery)) {
-            return offer;
-        }
-    });
+    return filteredOffers;
 }
 
 export const getOffer = async (id: number) => {

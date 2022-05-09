@@ -32,9 +32,6 @@ export const createPantryItem = async (firebaseAuthId: string | undefined, item:
 
     if (!customer) return null;
 
-    console.log(item);
-    console.log('hi 000');
-
     return await prismaClient.pantryItem.create({
         data: {
             expirationDate: item.expiration_date,
