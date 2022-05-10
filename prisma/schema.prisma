@@ -34,31 +34,29 @@ model BusinessOwner {
 }
 
 model Customer {
-  id                  Int             @id @default(autoincrement())
-  userId              Int
-  user                User            @relation(fields: [userId], references: [id])
-  fullName            String
-  phoneNumber         String
-  familyCardNumber    String
-  photoUrl            String
-  preferredCategories OfferCategory[]
-  Offer               Offer[]
-  PantryItem          PantryItem[]
+  id               Int          @id @default(autoincrement())
+  userId           Int
+  user             User         @relation(fields: [userId], references: [id])
+  fullName         String
+  phoneNumber      String
+  familyCardNumber String
+  photoUrl         String
+  Offer            Offer[]
+  PantryItem       PantryItem[]
 }
 
 model Ingredient {
-  id              Int              @id @default(autoincrement())
-  title           String           @unique
-  businessOwners  BusinessOwner[]
-  offers          Offer[]
-  PantryItem      PantryItem[]
+  id             Int             @id @default(autoincrement())
+  title          String          @unique
+  businessOwners BusinessOwner[]
+  offers         Offer[]
+  PantryItem     PantryItem[]
 }
 
 model OfferCategory {
-  id        Int        @id @default(autoincrement())
-  title     String     @unique
-  Offer     Offer[]
-  customers Customer[]
+  id    Int     @id @default(autoincrement())
+  title String  @unique
+  Offer Offer[]
 }
 
 model Offer {
@@ -89,7 +87,6 @@ model PantryItem {
   pantryCategory   String
   quantity         Int?
   measurementUnits String?
-  isExpired        Boolean    @default(false)
   customerId       Int
   customer         Customer   @relation(fields: [customerId], references: [id])
   ingredientId     Int

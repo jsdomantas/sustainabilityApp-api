@@ -19,7 +19,7 @@ export type CustomerUserData = {
     phoneNumber: string;
     photoUrl: string;
     familyCardNumber: string;
-    preferredFoodCategories: Array<{ value: number; label: string }>;
+    // preferredFoodCategories: Array<{ value: number; label: string }>;
     isBusinessAccount: boolean;
     email: string;
     uid: string;

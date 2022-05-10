@@ -169,6 +169,9 @@ export const createOffer = async (offerData: any, firebaseAuthId: string | undef
             pickupTime: businessOwner.usualPickupTime,
             latitude: businessOwner.latitude,
             longitude: businessOwner.longitude,
+            category: {
+                connect: { id: offerData.categoryId },
+            },
             products: {
                 connect: offerData.products.map((product: any) => ({ id: product.value })),
             },

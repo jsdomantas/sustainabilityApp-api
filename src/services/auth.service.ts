@@ -19,9 +19,9 @@ export const createBasicUser = async (userData: CustomerUserData, userId: number
             phoneNumber: userData.phoneNumber,
             photoUrl: userData.photoUrl,
             familyCardNumber: userData.familyCardNumber,
-            preferredCategories: {
-                connect: userData.preferredFoodCategories.map(category => ({ id: category.value }))
-            },
+            // preferredCategories: {
+            //     connect: userData.preferredFoodCategories.map(category => ({ id: category.value }))
+            // },
             user: {
                 connect: {
                     id: userId,
