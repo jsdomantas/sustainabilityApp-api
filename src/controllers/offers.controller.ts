@@ -64,18 +64,19 @@ export const getCreatedOffer = async (req: Request, res: Response) => {
 export const createOffer = async (req: Request, res: Response) => {
     const decodedToken = await getDecodedJwt(req.headers?.authorization);
 
-    await offersService.createOffer(req.body, decodedToken?.uid);
+    const offer = await offersService.createOffer(req.body, decodedToken?.uid);
+    console.log(offer);
 
     const usersWithFamilyCards = await prismaClient.customer.findMany({ where: { familyCardNumber: { contains: '1' } } });
     const usersWithFamilyCardsDeviceTokens = await prismaClient.deviceToken.findMany({ where: { user: { id: { in: usersWithFamilyCards.map(user => user.userId) } } } });
 
-    const usersWithoutFamilyCardsDeviceTokens = await prismaClient.deviceToken.findMany({ where: { NOT: { user: { id: { in: usersWithFamilyCards.map(user => user.userId) } } } } });
+    // const usersWithoutFamilyCardsDeviceTokens = await prismaClient.deviceToken.findMany({ where: { NOT: { user: { id: { in: usersWithFamilyCards.map(user => user.userId) } } } } });
 
-    await notificationsService.sendBackgroundPushNotifications(usersWithFamilyCardsDeviceTokens.map(obj => obj.token));
+    await notificationsService.sendBackgroundPushNotifications(usersWithFamilyCardsDeviceTokens.map(obj => obj.token), offer?.id!);
 
-    setTimeout(async () => {
-        await notificationsService.sendBackgroundPushNotifications(usersWithoutFamilyCardsDeviceTokens.map(obj => obj.token));
-    }, 1000 * 10);
+    // setTimeout(async () => {
+    //     await notificationsService.sendBackgroundPushNotifications(usersWithoutFamilyCardsDeviceTokens.map(obj => obj.token), offer?.id!);
+    // }, 1000 * 10);
 
     res.sendStatus(200);
 }
@@ -110,4 +111,14 @@ export const createReview = async (req: Request, res: Response) => {
     await offersService.createReview(decodedToken?.uid, Number(receiverId), Number(offerId), review);
 
     res.sendStatus(200);
+}
+
+export const getRecommendedOffers = async (req: Request, res: Response) => {
+    const decodedToken = await getDecodedJwt(req.headers?.authorization);
+
+    const reccs = await recombeeService.getProductRecommendations(decodedToken?.uid);
+
+    const offersByRecommendedProducts = await offersService.getRecommendedOffers(reccs.recomms);
+
+    res.json(offersByRecommendedProducts);
 }

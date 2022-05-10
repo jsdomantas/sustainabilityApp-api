@@ -9,7 +9,12 @@ export const addDetailViewInteraction = async (firebaseAuthId: string | undefine
     if (!firebaseAuthId || productIds.length === 0) return;
 
     const productRequests = productIds.map(pId => new requests.AddDetailView(firebaseAuthId, `product-${pId}`));
-    console.log(productIds);
 
     await recombeeClient.send(new requests.Batch(productRequests));
+}
+
+export const getProductRecommendations = async (firebaseAuthId: string | undefined) => {
+    if (!firebaseAuthId) return;
+
+    return await recombeeClient.send(new requests.RecommendItemsToUser(firebaseAuthId, 10, { scenario: 'Product-recommendations'}));
 }

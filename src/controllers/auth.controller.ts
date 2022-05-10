@@ -21,13 +21,14 @@ export const signUp = async (req: Request, res: Response) => {
 }
 
 export const getProfile = async (req: Request, res: Response)=> {
-    console.log(req.headers);
     const jwt = req.headers.authorization?.split('Bearer ')[1];
 
     if (jwt != null) {
         const decodedJwt = await admin.auth().verifyIdToken(jwt);
 
         const user = await authService.getUserProfile(decodedJwt.uid);
+        // await recombeeService.createUser(decodedJwt.uid);
+
         res.json(user);
     } else {
         res.sendStatus(403);

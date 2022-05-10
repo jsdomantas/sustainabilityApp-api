@@ -56,9 +56,6 @@ export const getUserProfile = async (firebaseAuthId: string) => {
         where: { firebaseUserId: firebaseAuthId },
     })
 
-    console.log(user);
-
-
     if (!user) return null;
 
     let clientOrBusinessOwner;

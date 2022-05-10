@@ -1,6 +1,6 @@
 import admin from "firebase-admin";
 
-export const sendBackgroundPushNotifications = async (tokens: string[]) => {
+export const sendBackgroundPushNotifications = async (tokens: string[], offerId: number) => {
     await admin.messaging().sendToDevice(tokens, {
         notification: {
             body: 'New offer',
@@ -8,6 +8,8 @@ export const sendBackgroundPushNotifications = async (tokens: string[]) => {
         },
         data: {
             type: 'alarmNotification',
+            navigateTo: 'ProductDetails',
+            offerId: offerId.toString(),
         },
     })
 }

@@ -19,7 +19,6 @@ export const getAllAvailableOffers = async (parameters: any) => {
     console.log(parameters);
 
     function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-        console.log({ lat1, lon1, lat2, lon2 });
         const p = 0.017453292519943295;    // Math.PI / 180
         const c = Math.cos;
         const a = 0.5 - c((lat2 - lat1) * p) / 2 +
@@ -162,7 +161,7 @@ export const createOffer = async (offerData: any, firebaseAuthId: string | undef
 
     if (!businessOwner) return null;
 
-    await prismaClient.offer.create({
+    return await prismaClient.offer.create({
         data: {
             title: offerData.name,
             description: offerData.description,
@@ -286,4 +285,46 @@ export const createReview = async (firebaseAuthId: string | undefined, receiverI
             }
         }
     })
+}
+
+export const getRecommendedOffers = async (productIds: Array<{ id: string }>) => {
+    const allOffers = await prismaClient.offer.findMany({
+        where: {
+            status: 'posted',
+        },
+        select: {
+            id: true,
+            createdAt: true,
+            title: true,
+            photoUrl: true,
+            pickupTime: true,
+            products: {
+                select: {
+                    id: true,
+                }
+            },
+            businessOwner: {
+                select: {
+                    title: true,
+                    latitude: true,
+                    longitude: true,
+                    user: {
+                        select: {
+                            reviewReceiver: true,
+                        },
+                    }
+                }
+            },
+            category: {
+                select: {
+                    title: true
+                }
+            }
+        }
+    });
+
+    const productIdsMapped = productIds.map(productIdObj => Number(productIdObj.id));
+
+    return allOffers.filter(offer => offer.products.some(product => productIdsMapped.includes(product.id)));
+
 }
